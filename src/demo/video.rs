@@ -15,7 +15,7 @@ macro_rules! trying(
 // hadle the annoying Rect i32
 macro_rules! rect(
     ($x:expr, $y:expr, $w:expr, $h:expr) => (
-        sdl2::rect::Rect::new($x as i32, $y as i32, $w as i32, $h as i32)
+        sdl2::rect::Rect::new($x, $y, $w, $h)
     )
 );
 
