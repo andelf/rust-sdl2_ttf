@@ -477,7 +477,7 @@ pub trait LoaderRWops {
     fn load_font_index(&self, ptsize: i32, index: i32) -> SdlResult<Font>;
 }
 
-impl LoaderRWops for RWops {
+impl<'a> LoaderRWops for RWops<'a> {
     fn load_font(&self, ptsize: i32) -> SdlResult<Font> {
         let raw = unsafe {
             ffi::TTF_OpenFontRW(self.raw(), 0, ptsize as c_int)
