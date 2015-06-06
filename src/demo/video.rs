@@ -1,4 +1,6 @@
-use sdl2;
+extern crate sdl2;
+
+use sdl2::*;
 use sdl2_ttf;
 use sdl2::event::Event;
 use sdl2::keycode::KeyCode;
@@ -20,15 +22,16 @@ macro_rules! rect(
 );
 
 pub fn main(filename: &Path) {
-    let sdl_context = sdl2::init(sdl2::INIT_VIDEO).unwrap();
+    let mut sdl_context = sdl2::init().video().unwrap();
     sdl2_ttf::init();
 
-    let window = trying!(sdl2::video::Window::new(&sdl_context,
-            "rust-sdl2 demo: Video", sdl2::video::WindowPos::PosCentered,
-            sdl2::video::WindowPos::PosCentered, SCREEN_WIDTH, SCREEN_HEIGHT, sdl2::video::OPENGL));
+    let window = sdl_context.window("rust-sdl2 demo: Video", 800, 600)
+        .position_centered()
+        .opengl()
+        .build()
+        .unwrap();
 
-    let mut renderer = trying!(sdl2::render::Renderer::from_window(
-            window, sdl2::render::RenderDriverIndex::Auto, sdl2::render::ACCELERATED));
+    let mut renderer = window.renderer().build().unwrap();
 
     // Load a font
     let font = trying!(sdl2_ttf::Font::from_file(filename, 128));
@@ -47,10 +50,8 @@ pub fn main(filename: &Path) {
 
     drawer.present();
 
-    let mut event_pump = sdl_context.event_pump();
-
     'mainloop: loop {
-        for event in event_pump.poll_iter() {
+        for event in sdl_context.event_pump().poll_iter() {
             match event {
                 Event::Quit{..} => break 'mainloop,
                 Event::KeyDown {keycode: KeyCode::Escape, ..} => break 'mainloop,
