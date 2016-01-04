@@ -248,7 +248,7 @@ impl Font {
         //! Load file for use as a font, at ptsize size.
         unsafe {
             let cstring = CString::new(filename.to_str().unwrap()).unwrap();
-            let raw = ffi::TTF_OpenFont(cstring.as_ptr(), ptsize as c_int);
+            let raw = ffi::TTF_OpenFont(cstring.as_ptr() as *const i8, ptsize as c_int);
             if raw.is_null() {
                 Err(get_error())
             } else {
@@ -261,7 +261,7 @@ impl Font {
         //! Load file, face index, for use as a font, at ptsize size.
         unsafe {
             let cstring = CString::new(filename.to_str().unwrap().as_bytes()).unwrap();
-            let raw = ffi::TTF_OpenFontIndex(cstring.as_ptr(), ptsize as c_int, index as c_long);
+            let raw = ffi::TTF_OpenFontIndex(cstring.as_ptr() as *const i8, ptsize as c_int, index as c_long);
             if raw.is_null() {
                 Err(get_error())
             } else {
@@ -383,7 +383,7 @@ impl Font {
             if cname.is_null() {
                 None
             } else {
-                Some(String::from_utf8_lossy(CStr::from_ptr(cname).to_bytes()).to_string())
+                Some(String::from_utf8_lossy(CStr::from_ptr(cname as *const u8).to_bytes()).to_string())
             }
         }
     }
@@ -395,7 +395,7 @@ impl Font {
             if cname.is_null() {
                 None
             } else {
-                Some(String::from_utf8_lossy(CStr::from_ptr(cname).to_bytes()).to_string())
+                Some(String::from_utf8_lossy(CStr::from_ptr(cname as *const u8).to_bytes()).to_string())
             }
         }
     }
@@ -447,7 +447,7 @@ impl Font {
             },
         };
         let ret = unsafe {
-            ffi::TTF_SizeText(self.raw, ctext.as_ptr(), &w, &h)
+            ffi::TTF_SizeText(self.raw, ctext.as_ptr() as *const i8, &w, &h)
         };
         if ret != 0 {
             Err(get_error())
@@ -468,19 +468,19 @@ impl Font {
                     let source = CString::new(bytes).unwrap();
                     match mode {
                         RenderMode::Solid { foreground } => {
-                            ffi::TTF_RenderText_Solid(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderText_Solid(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground))
                         },
                         RenderMode::Shaded { foreground, background } => {
-                            ffi::TTF_RenderText_Shaded(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderText_Shaded(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground), color_to_c_color(background))
                         },
                         RenderMode::Blended { foreground } => {
-                            ffi::TTF_RenderText_Blended(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderText_Blended(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground))
                         },
                         RenderMode::BlendedWrapped { foreground, wrap_length } => {
-                            ffi::TTF_RenderText_Blended_Wrapped(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderText_Blended_Wrapped(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground), wrap_length)
                         }
                     }
@@ -490,19 +490,19 @@ impl Font {
                     let source = CString::new(string.as_bytes()).unwrap();
                     match mode {
                         RenderMode::Solid { foreground } => {
-                            ffi::TTF_RenderUTF8_Solid(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderUTF8_Solid(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground))
                         },
                         RenderMode::Shaded { foreground, background } => {
-                            ffi::TTF_RenderUTF8_Shaded(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderUTF8_Shaded(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground), color_to_c_color(background))
                         },
                         RenderMode::Blended { foreground } => {
-                            ffi::TTF_RenderUTF8_Blended(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderUTF8_Blended(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground))
                         },
                         RenderMode::BlendedWrapped { foreground, wrap_length } => {
-                            ffi::TTF_RenderUTF8_Blended_Wrapped(self.raw, source.as_ptr(),
+                            ffi::TTF_RenderUTF8_Blended_Wrapped(self.raw, source.as_ptr() as *const i8,
                                 color_to_c_color(foreground), wrap_length)
                         }
                     }
